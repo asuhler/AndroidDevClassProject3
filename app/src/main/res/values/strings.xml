@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Playing with project three</string>
+    <string name="action_settings">Settings</string>
+    <string-array name="numbers">
+        <item>One</item>
+        <item>Two</item>
+        <item>Three</item>
+        <item>Four</item>
+    </string-array>
+
+    <string-array name="JSON_URL_NAME">
+        <item>CNU - Defender</item>
+        <item>Pair - Teton Software - Pets</item>
+    </string-array>
+    <string-array name="JSON_URL">
+        <item>http://www.pcs.cnu.edu/~kperkins/pets/</item>
+        <item>http://www.tetonsoftware.com/pets/</item>
+    </string-array>
+
+</resources>

@@ -15,9 +15,4 @@
         android:visible="true"
         app:showAsAction="always"></item>
 
-    <item
-        android:id="@+id/about"
-        android:orderInCategory="500"
-        android:title="Help"
-        app:showAsAction="never" />
 </menu>

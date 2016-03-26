@@ -6,6 +6,6 @@
     android:textSize="20dip"
     android:gravity="left"
     android:textColor="@color/abc_primary_text_material_dark"
-    android:background="@color/colorPrimary"
+    android:background="@color/toolbarTransparent"
     android:padding="5dip"
     />

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+        <ListPreference
+            android:key="PREF_SERVER"
+            android:title="Source"
+            android:summary="Determines the host address for the JSON server"
+            android:entries="@array/JSON_URL_NAME"
+            android:entryValues="@array/JSON_URL"
+            android:defaultValue="http://www.tetonsoftware.com/pets/"/>
+
+</PreferenceScreen>

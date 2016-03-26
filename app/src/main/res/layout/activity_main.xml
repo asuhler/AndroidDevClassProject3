@@ -21,7 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@drawable/translucent_background_toolbar"
-        app:popupTheme="@style/AppTheme.NoActionBar">
+        app:popupTheme="@style/AppTheme.NoActionBar"
+        android:visibility="visible">
 
         <Spinner
             android:id="@+id/spinner"
@@ -35,7 +36,9 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/BackgroundView" />
+        android:id="@+id/BackgroundView"
+        android:scaleType="matrix"
+        android:layout_centerInParent="true" />
 
     <include layout="@layout/content_main" />
 

@@ -207,6 +207,7 @@ public class MainActivity extends AppCompatActivity{
         }else{
             //Toast.makeText(MainActivity.this, R.string.NETWORK, Toast.LENGTH_SHORT).show();
             String address = myPreference.getString("PREF_SERVER", "");
+            Log.e("LOG", address);
             CheckConnection BLARG = new CheckConnection();
 
             try{

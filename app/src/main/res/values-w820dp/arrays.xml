@@ -11,5 +11,5 @@
     </string-array>
 
     <integer name="Timeout">1000</integer>
-    <integer name="Buffer_Read_Size">2048</integer>
+    <integer name="Buffer_Read_Size">8096</integer>
 </resources>

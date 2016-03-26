@@ -33,6 +33,7 @@ import android.graphics.Bitmap;
 
 
 public class MainActivity extends AppCompatActivity{
+    public static final String[] NO_CONNECTION = {"No_Data"};
     RelativeLayout rl;
     ImageView background;
     SharedPreferences myPreference;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity{
     ArrayList<animal> pets;
     Bitmap background_image;
     String[] Pet_Names;
+    private ArrayAdapter adapter;
 
 
 
@@ -61,23 +63,38 @@ public class MainActivity extends AppCompatActivity{
 
 
 
+
+
+
+
         setSupportActionBar(toolbar);
 
         //Lets remove the title
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         //populate spinner
-        setupSimpleSpinner();
+
 
         listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
 
             @Override
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                Toast.makeText(MainActivity.this, "Key=" + key, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Key=" + key, Toast.LENGTH_SHORT).show();
                 if (key.equals("PREF_SERVER")) {
                     String myString = myPreference.getString("PREF_SERVER", "");
-                    Toast.makeText(MainActivity.this, "From Listener PREF_SERVER=" + myString, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, "From Listener PREF_SERVER=" + myString, Toast.LENGTH_SHORT).show();
                     boolean hi = checkConnection();
+                    if(hi==false){
+                        setupSimpleSpinner(NO_CONNECTION);
+                        background.setImageResource(R.color.toolbarTransparent);
+                    }else {
+                        setupSimpleSpinner(Pet_Names);
+                        Bitmap hello = null;
+                        String url = (myPreference.getString("PREF_SERVER", "") + "p0.png");
+                        Log.e("LOG", url);
+                        hello = downloadBMP(url);
+
+                    }
                 }
 
             }
@@ -85,8 +102,18 @@ public class MainActivity extends AppCompatActivity{
         // register the listener
         myPreference.registerOnSharedPreferenceChangeListener(listener);
 
-        boolean hi = checkConnection();
+        boolean hi =checkConnection();
+        if(hi==false){
+            setupSimpleSpinner(NO_CONNECTION);
+            background.setImageResource(R.color.toolbarTransparent);
+        }else{
+            setupSimpleSpinner(Pet_Names);
+            Bitmap hello = null;
+            String url = (myPreference.getString("PREF_SERVER", "") + "p0.png");
+            Log.e("LOG", url);
+            hello = downloadBMP(url);
 
+        }
 
 
     }
@@ -100,10 +127,10 @@ public class MainActivity extends AppCompatActivity{
             pets = hi.execute(address).get();
 
         }catch (ExecutionException e){
-            Log.e(e.toString(), "YOU FAILED");
+            Log.e("LOG" , "YOU FAILED with an execution exception in getAnimalList");
             e.printStackTrace();
         }catch (InterruptedException e){
-            Log.e(e.toString(), "YOU FAILED");
+            Log.e("LOG", "YOU FAILED with an interruption exception in getAnimalList");
             e.printStackTrace();
         }
 
@@ -126,9 +153,6 @@ public class MainActivity extends AppCompatActivity{
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.TestBackground:
-                changeBackground();
-                return true;
             case R.id.action_settings:
                 Intent myIntent = new Intent(this, PrefActivity.class);
                 startActivity(myIntent);
@@ -141,25 +165,20 @@ public class MainActivity extends AppCompatActivity{
 
 
 
-    private void setupSimpleSpinner() {
+    private void setupSimpleSpinner(String[] input) {
         //create a data adapter to fill above spinner with choices
         //R.array.numbers is arraylist in strings.xml
         //R.layout.spinner_item_simple is just a textview
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.numbers, R.layout.spinner_item_simple);
-
-        //get a reference to the spinner
-        spinner = (Spinner)findViewById(R.id.spinner);
-
-        //bind the spinner to the datasource managed by adapter
-        spinner.setAdapter(adapter);
-        //respond when spinner clicked
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public static final int SELECTED_ITEM = 0;
 
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int pos, long rowid) {
-                if (arg0.getChildAt(SELECTED_ITEM) != null) {
-                    ((TextView) arg0.getChildAt(SELECTED_ITEM)).setTextColor(Color.WHITE);
+                boolean hi = checkConnection();
+                String url = myPreference.getString("PREF_SERVER", "") + "p" + pos +".png";
+                Log.e("LOG", url);
+                if (hi == true) {
+                    downloadBMP(url);
                 }
             }
 
@@ -167,24 +186,26 @@ public class MainActivity extends AppCompatActivity{
             public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
+
+
+        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,input);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
-    private void changeBackground(){
-        background.setImageResource(R.drawable.falken);
 
-
-    }
 
     //checks for JSON file at initial URL set in preferences, returns array of names for spinner
     private boolean checkConnection(){
         int return_code = 0;
-        ArrayList<animal> pets = new ArrayList<animal>();
+
         if(!isConnectedToNetwork()){
             Toast.makeText(MainActivity.this, R.string.No_Network, Toast.LENGTH_SHORT).show();
             background.setImageResource(R.drawable.cat_404);
             return false;
         }else{
-            Toast.makeText(MainActivity.this, R.string.NETWORK, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MainActivity.this, R.string.NETWORK, Toast.LENGTH_SHORT).show();
             String address = myPreference.getString("PREF_SERVER", "");
             CheckConnection BLARG = new CheckConnection();
 
@@ -202,22 +223,27 @@ public class MainActivity extends AppCompatActivity{
             Log.e("LOG", Integer.toString(return_code)+ " Failed to connect to the server, general failure");
 
         }else if(return_code != 200){
-            Log.e("LOG",Integer.toString(return_code)+ " Failed to connect to the server, failed to connect");
+            Log.e("LOG", Integer.toString(return_code) + " Failed to connect to the server, failed to connect");
             Toast.makeText(MainActivity.this, "Failed to connect to page" + myPreference.getString("PREF_SERVER", "") + " returned code " + return_code, Toast.LENGTH_SHORT).show();
             return false;
         }else{
-            Toast.makeText(MainActivity.this, "IT WORKEDDDDD", Toast.LENGTH_SHORT).show();
-            Log.e("LOG", "IT WORKEDDDDDDD");
+            //Toast.makeText(MainActivity.this, "IT WORKEDDDDD", Toast.LENGTH_SHORT).show();
+            //Log.e("LOG", "IT WORKEDDDDDDD");
 
             pets = getAnimalList();
             if(pets.size()==0){
-                Log.e("LOG",pets.toString()+ " No pets in the pet array list");
+                //Log.e("LOG",pets.toString()+ " No pets in the pet array list");
                 return false;
             }else{
+                Pet_Names = new String[pets.size()];
                 for(int i=0; i<pets.size(); i++){
                     Pet_Names[i]=(pets.get(i).name);
                 }
-                Toast.makeText(MainActivity.this, Pet_Names.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, Pet_Names.toString(), Toast.LENGTH_SHORT).show();
+
+
+
+                return true;
             }
 
         }
@@ -228,8 +254,18 @@ public class MainActivity extends AppCompatActivity{
 
     //download image from server based on object and file name
     private Bitmap downloadBMP(String filename){
+        Bitmap output = null;
 
-        return null;
+        downloadImage image = new downloadImage();
+        try{
+            output = image.execute(filename).get();
+            background.setImageBitmap(output);
+        }catch (Exception e){
+            Log.e("LOG", e.toString());
+            e.printStackTrace();
+        }
+
+        return output;
     }
 
     //check if phone is connected to network

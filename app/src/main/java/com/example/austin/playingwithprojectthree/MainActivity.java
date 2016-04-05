@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity{
         myPreference = PreferenceManager.getDefaultSharedPreferences(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         spinner = (Spinner)findViewById(R.id.spinner);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
 
 
@@ -207,15 +208,18 @@ public class MainActivity extends AppCompatActivity{
         }else{
             //Toast.makeText(MainActivity.this, R.string.NETWORK, Toast.LENGTH_SHORT).show();
             String address = myPreference.getString("PREF_SERVER", "");
-            Log.e("LOG", address);
+            Toast.makeText(MainActivity.this, address, Toast.LENGTH_SHORT).show();
+            Log.e("LOG", "PREF_SERVER: " + address);
             CheckConnection BLARG = new CheckConnection();
 
             try{
+                Log.e("LOG", address);
                 return_code = BLARG.execute(address).get();
             }catch (InterruptedException e){
                 Log.e("LOG", "Interrupted");
                 e.printStackTrace();
             }catch (ExecutionException e){
+                Log.e("LOG", address);
                 Log.e("LOG", "failed to execute");
                 e.printStackTrace();
             }

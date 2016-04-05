@@ -18,8 +18,10 @@ public class CheckConnection extends AsyncTask<String, Void, Integer>{
     protected Integer doInBackground(String... params){
         URL address = null;
         int status = 0;
+        Log.e("LOG", params[0]);
         try{
             address = new URL(params[0]);
+
         }catch (MalformedURLException e){
             e.printStackTrace();
         }

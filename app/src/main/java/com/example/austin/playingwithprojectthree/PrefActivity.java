@@ -16,6 +16,7 @@ public class PrefActivity extends Activity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(android.R.id.content, prefFragment);
         fragmentTransaction.commit();
+
     }
 
     @Override
